@@ -13,6 +13,10 @@ import com.herokuapp.jeffruder.perkaapplication.services.PerkaApiService;
 import java.io.IOException;
 import java.io.InputStream;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
     private static String FILE_NAME = "resume.pdf";
     private String mEncoded;
@@ -34,8 +38,17 @@ public class MainActivity extends AppCompatActivity {
                 PerkaApiService service = new PerkaApiService(MainActivity.this, mEncoded);
                 String json = service.buildJson();
                 try{
-                    String result = service.post(json);
-                    Log.i("RESULT", result);
+                    service.post(json, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Log.i("RESULT", response.toString());
+                        }
+                    });
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
                 }

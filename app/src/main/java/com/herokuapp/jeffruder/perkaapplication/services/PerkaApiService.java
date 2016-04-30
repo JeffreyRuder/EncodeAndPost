@@ -7,6 +7,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,7 +40,7 @@ public class PerkaApiService {
             jsonObject.put("email_address", "ruderjt@gmail.com");
             jsonObject.put("position_id", "ANDROID");
             jsonObject.put("explanation", "I created a very simple Android application that encodes a pdf to base64" +
-                    " and submits the post request using OkHttp.");
+                    " and submits the post request using OkHttp. The code is at https://github.com/JeffreyRuder/EncodeAndPost.git");
             jsonObject.put("projects", new String[]{"http://jeffruder.herokuapp.com",
                     "https://github.com/JeffreyRuder",
                     "https://play.google.com/store/apps/details?id=com.epicodus.shake_it_up",
@@ -53,13 +55,13 @@ public class PerkaApiService {
         return jsonObject.toString();
     }
 
-    public String post(String json) throws IOException {
+    public void post(String json, Callback callback) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(API_ENDPOINT)
                 .post(body)
                 .build();
-        Response response = mClient.newCall(request).execute();
-        return response.body().string();
+        Call call = mClient.newCall(request);
+        call.enqueue(callback);
     }
 }
